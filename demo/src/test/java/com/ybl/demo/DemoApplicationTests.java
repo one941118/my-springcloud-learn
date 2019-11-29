@@ -8,6 +8,12 @@ class DemoApplicationTests {
 
 	@Test
 	void contextLoads() {
+		System.out.println("aabb");
+	}
+
+	@Test
+	void aabbcc(){
+		System.out.println("aaa");
 	}
 
 }

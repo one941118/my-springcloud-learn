@@ -1,6 +1,10 @@
 package com.ybl.demo.test;
 
+import org.apache.rocketmq.client.exception.MQClientException;
 import org.apache.rocketmq.client.producer.DefaultMQProducer;
+import org.apache.rocketmq.client.producer.SendResult;
+import org.apache.rocketmq.common.message.Message;
+import org.springframework.beans.factory.annotation.Value;
 
 /**
  * @ProjectName: demo
@@ -13,6 +17,9 @@ import org.apache.rocketmq.client.producer.DefaultMQProducer;
  */
 public class RocketDemoProducer {
 
+    @Value("rocket.server.host")
+    public static  String rocketMqServerIp;
+
     public static void main(String[] args) {
 
     }
@@ -20,7 +27,19 @@ public class RocketDemoProducer {
     /**
      * 同步消息
      */
-    public static void SyncProducer(){
-        DefaultMQProducer defaultMQProducer = new DefaultMQProducer("");
+    public static void SyncProducer() throws Exception {
+        //创建一个mqGroup
+        DefaultMQProducer producer = new DefaultMQProducer("test_rocket_group");
+        //配置mq地址
+        producer.setNamesrvAddr(rocketMqServerIp);
+        producer.start();
+        Message message = new Message("test_topic", "tags_test", "hello rocket".getBytes());
+        //发送消息
+        SendResult sendResult = producer.send(message);
+        //输出打印发送结果
+        System.out.printf("%s%n", sendResult);
+        //关掉生产者
+        producer.shutdown();
     }
+
 }
