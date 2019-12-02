@@ -29,9 +29,9 @@ public class RocketDemoCustomer {
     }
 
     public static void customer() throws MQClientException {
-        DefaultMQPushConsumer consumer = new DefaultMQPushConsumer("test_rocket_group");
+        DefaultMQPushConsumer consumer = new DefaultMQPushConsumer("Jodie_Daily_test");
         consumer.setNamesrvAddr("192.168.7.194:9876");
-        consumer.subscribe("test_topic","*");
+        consumer.subscribe("Jodie_topic_10231","*");
         consumer.registerMessageListener(new MessageListenerConcurrently() {
             @Override
             public ConsumeConcurrentlyStatus consumeMessage(List<MessageExt> msgs,

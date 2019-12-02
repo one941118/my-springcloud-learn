@@ -26,7 +26,12 @@ public class RocketDemoProducer {
 
     public static void main(String[] args) {
         try {
-            syncProducer();
+            //同步消息
+//            syncProducer();
+            //异步消息
+            asyncProducer();
+            //单向传输
+//            oneWayProducer();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -53,5 +58,57 @@ public class RocketDemoProducer {
         //关掉生产者
         producer.shutdown();
     }
+
+    /**
+     * 异步消息
+     */
+    public static void asyncProducer() throws Exception {
+        //创建一个mqGroup
+        DefaultMQProducer producer = new DefaultMQProducer("Jodie_Daily_test");
+        //配置mq地址
+        producer.setNamesrvAddr("192.168.7.194:9876");
+        producer.start();
+        producer.setRetryTimesWhenSendAsyncFailed(0);
+        Message message = new Message("Jodie_topic_10231", "TagA","OrderID188", "hello rocket".getBytes
+            (RemotingHelper
+            .DEFAULT_CHARSET));
+        //发送消息
+        producer.send(message, new SendCallback() {
+            @Override
+            public void onSuccess(SendResult sendResult) {
+                //输出打印发送结果
+                System.out.printf("%-10d OK %s %n",
+                    1,sendResult.getMsgId());
+            }
+            @Override
+            public void onException(Throwable throwable) {
+                System.out.printf("%-10d Exception %s %n", 1,throwable);
+                throwable.printStackTrace();
+            }
+        });
+        Thread.sleep(2000);
+        //关掉生产者
+        producer.shutdown();
+    }
+
+    /**
+     * 异步消息
+     */
+    public static void oneWayProducer() throws Exception {
+        //创建一个mqGroup
+        DefaultMQProducer producer = new DefaultMQProducer("test_rocket_group_one_way");
+        //配置mq地址
+        producer.setNamesrvAddr("192.168.7.194:9876");
+        producer.start();
+        Message message = new Message("test_topic_one_way", "tags_test_one_way", "hello rocket oneWayProducer"
+            .getBytes
+            (RemotingHelper
+                .DEFAULT_CHARSET));
+        //发送消息
+         producer.sendOneway(message);
+        //关掉生产者
+        producer.shutdown();
+    }
+
 
 }
