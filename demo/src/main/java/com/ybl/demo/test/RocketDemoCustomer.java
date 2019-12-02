@@ -19,55 +19,31 @@ import org.apache.rocketmq.common.message.MessageExt;
  */
 public class RocketDemoCustomer {
 
-//
-//    public static void main(String[] args) {
-//        try {
-//            customer();
-//        } catch (MQClientException e) {
-//            e.printStackTrace();
-//        }
-//    }
-//
-//    public static void customer() throws MQClientException {
-//        DefaultMQPushConsumer consumer = new DefaultMQPushConsumer("test_rocket_group");
-//        consumer.setNamesrvAddr("192.168.0.199:9876");
-//        consumer.subscribe("test_topic_aabb","*");
-//        consumer.registerMessageListener(new MessageListenerConcurrently() {
-//            @Override
-//            public ConsumeConcurrentlyStatus consumeMessage(List<MessageExt> msgs,
-//                ConsumeConcurrentlyContext consumeConcurrentlyContext) {
-//                System.out.printf("%s Receive New Messages: %s %n", Thread.currentThread().getName(), msgs);
-//                return ConsumeConcurrentlyStatus.CONSUME_SUCCESS;
-//            }
-//        });
-//        consumer.start();
-//        System.out.printf("Consumer Started.%n");
-//    }
 
-    public static void main(String[] args) throws InterruptedException, MQClientException {
+    public static void main(String[] args) {
+        try {
+            customer();
+        } catch (MQClientException e) {
+            e.printStackTrace();
+        }
+    }
 
-        // Instantiate with specified consumer group name.
-        DefaultMQPushConsumer consumer = new DefaultMQPushConsumer("please_rename_unique_group_name");
-
-        // Specify name server addresses.
-        consumer.setNamesrvAddr("192.168.0.199:9876");
-
-        // Subscribe one more more topics to consume.
-        consumer.subscribe("TopicTest", "*");
-        // Register callback to execute on arrival of messages fetched from brokers.
+    public static void customer() throws MQClientException {
+        DefaultMQPushConsumer consumer = new DefaultMQPushConsumer("test_rocket_group");
+        consumer.setNamesrvAddr("192.168.7.194:9876");
+        consumer.subscribe("test_topic","*");
         consumer.registerMessageListener(new MessageListenerConcurrently() {
-
             @Override
             public ConsumeConcurrentlyStatus consumeMessage(List<MessageExt> msgs,
-                ConsumeConcurrentlyContext context) {
+                ConsumeConcurrentlyContext consumeConcurrentlyContext) {
                 System.out.printf("%s Receive New Messages: %s %n", Thread.currentThread().getName(), msgs);
+                for (MessageExt msg : msgs) {
+                    System.out.println(new String(msg.getBody()));
+                }
                 return ConsumeConcurrentlyStatus.CONSUME_SUCCESS;
             }
         });
-
-        //Launch the consumer instance.
         consumer.start();
-
         System.out.printf("Consumer Started.%n");
     }
 
