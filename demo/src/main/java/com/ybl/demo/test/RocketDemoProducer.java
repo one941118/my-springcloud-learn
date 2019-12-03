@@ -9,6 +9,8 @@ import org.apache.rocketmq.remoting.common.RemotingHelper;
 import org.springframework.beans.factory.annotation.Value;
 
 import java.io.UnsupportedEncodingException;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @ProjectName: demo
@@ -65,17 +67,20 @@ public class RocketDemoProducer {
     public static void asyncProducer() throws Exception {
         //创建一个mqGroup
         DefaultMQProducer producer = new DefaultMQProducer("Jodie_Daily_test");
+       //线程计数器 用于确保消息发送后再shutdown producer
+        CountDownLatch countDownLatch = new CountDownLatch(1);//由于时用了异步操作，索引send没有等待时间，会导致还没send,就执行了shutdown 消息发送失败
         //配置mq地址
         producer.setNamesrvAddr("192.168.7.194:9876");
         producer.start();
         producer.setRetryTimesWhenSendAsyncFailed(0);
-        Message message = new Message("Jodie_topic_10231", "TagA","OrderID188", "hello rocket".getBytes
+        Message message = new Message("Jodie_topic_10231", "TagA","OrderID188", "hello rocket asy".getBytes
             (RemotingHelper
             .DEFAULT_CHARSET));
         //发送消息
         producer.send(message, new SendCallback() {
             @Override
             public void onSuccess(SendResult sendResult) {
+                countDownLatch.countDown();
                 //输出打印发送结果
                 System.out.printf("%-10d OK %s %n",
                     1,sendResult.getMsgId());
@@ -86,9 +91,10 @@ public class RocketDemoProducer {
                 throwable.printStackTrace();
             }
         });
-        Thread.sleep(2000);
+        countDownLatch.await();
         //关掉生产者
         producer.shutdown();
+        System.out.println("producer shutdown....");
     }
 
     /**
