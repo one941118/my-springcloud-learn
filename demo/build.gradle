@@ -24,6 +24,9 @@ dependencies {
 	// https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-api
 	testCompile group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: '5.5.2'
 
+	// https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-aop
+	compile group: 'org.springframework.boot', name: 'spring-boot-starter-aop', version: '2.2.1.RELEASE'
+	compileOnly 'org.projectlombok:lombok:1.18.2'
 }
 
 test {

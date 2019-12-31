@@ -1,14 +1,12 @@
 package com.ybl.demo.test;
 
-import org.springframework.util.Base64Utils;
+import com.ybl.demo.annotation.MyFirstAnnotation;
+import com.ybl.demo.query.UserQuery;
+import lombok.Data;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.ConcurrentSkipListMap;
-import java.util.concurrent.atomic.AtomicStampedReference;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -24,9 +22,11 @@ import java.util.regex.Pattern;
 @RequestMapping("/go")
 @RestController
 public class TestDemo {
-
+    @MyFirstAnnotation(name = "小刚",content = "tel")
     @GetMapping("test")
-    public String test(){
+    public String test(UserQuery userQuery){
+        System.out.println(userQuery.getName());
+        System.out.println(userQuery.getTel());
         return "aabb";
     }
 
@@ -78,6 +78,11 @@ public class TestDemo {
 //        map01.forEach((key,value)->{
 //            System.out.println(key + ":" + value);
 //        });
+
+        String aabb = "s0s-s20s-s9430425s-s3606266s-s4026706s-s4128724s-s4250229s-s5150906s-s5234189s-s11882881s"
+            + "-s11919242s";
+        System.out.println(aabb.replace("s4026706s-",""));
+
     }
 
     public static boolean isContainChinese(String str) {
@@ -89,4 +94,5 @@ public class TestDemo {
         }
         return false;
     }
+
 }
